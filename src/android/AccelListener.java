@@ -34,6 +34,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.view.WindowManager;
+import android.view.Display;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -58,6 +60,8 @@ public class AccelListener extends CordovaPlugin implements SensorEventListener 
     private Sensor mSensor;                           // Acceleration sensor returned by sensor manager
 
     private CallbackContext callbackContext;              // Keeps track of the JS callback context.
+    
+    private Display display;
 
     private Handler mainHandler=null;
     private Runnable mainRunnable =new Runnable() {
@@ -88,6 +92,7 @@ public class AccelListener extends CordovaPlugin implements SensorEventListener 
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
         this.sensorManager = (SensorManager) cordova.getActivity().getSystemService(Context.SENSOR_SERVICE);
+        this.display = ((WindowManager) cordova.getActivity().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
     }
 
     /**
@@ -234,12 +239,15 @@ public class AccelListener extends CordovaPlugin implements SensorEventListener 
         this.setStatus(AccelListener.RUNNING);
 
         if (this.accuracy >= SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM) {
-
+            // Get adjusted acceleration
+            int orientation = this.display.getRota‌​tion();
+            float[] acceleration = this.adjustAccelOrientation(orientation, event.values);
+            
             // Save time that event was received
             this.timestamp = System.currentTimeMillis();
-            this.x = event.values[0];
-            this.y = event.values[1];
-            this.z = event.values[2];
+            this.x = acceleration[0];
+            this.y = acceleration[1];
+            this.z = acceleration[2];
 
             this.win();
         }
@@ -255,6 +263,30 @@ public class AccelListener extends CordovaPlugin implements SensorEventListener 
         }
     }
 
+    /**
+     * Convert device default orientation to screen orientation
+     *
+     * @param displayRotation
+     * @param eventValues
+     */
+    private float[] adjustAccelOrientation(int displayRotation, float[] eventValues) {
+        float[] adjustedValues = new float[3];
+
+        final int axisSwap[][] = {
+          {  1,  -1,  0,  1  },     // ROTATION_0
+          { -1,  -1,  1,  0  },     // ROTATION_90
+          { -1,   1,  0,  1  },     // ROTATION_180
+          {  1,   1,  1,  0  }      // ROTATION_270
+        };
+
+        final int[] as = axisSwap[displayRotation];
+        adjustedValues[0]  =  (float)as[0] * eventValues[ as[2] ];
+        adjustedValues[1]  =  (float)as[1] * eventValues[ as[3] ];
+        adjustedValues[2]  =  eventValues[2];
+
+        return adjustedValues;
+    }
+    
     // Sends an error back to JS
     private void fail(int code, String message) {
         // Error object
