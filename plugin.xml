@@ -19,14 +19,14 @@
 -->
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-           id="org.apache.cordova.device-motion"
-      version="0.2.8-dev">
+           id="ch.becompany.cordova.device-motion"
+      version="0.0.1">
 	
     <name>Device Motion</name>
     <description>Cordova Device Motion Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,device,motion</keywords>
-    <repo>https://git-wip-us.apache.org/repos/asf/cordova-plugin-device-motion.git</repo>
+    <repo>https://github.com/becompany/cordova-plugin-device-motion.git</repo>
     <issue>https://issues.apache.org/jira/browse/CB/component/12320636</issue>
 
     <js-module src="www/Acceleration.js" name="Acceleration">
@@ -55,11 +55,11 @@
 	    
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Accelerometer">
-                <param name="android-package" value="org.apache.cordova.devicemotion.AccelListener"/>
+                <param name="android-package" value="ch.becompany.cordova.devicemotion.AccelListener"/>
             </feature>
         </config-file>
 
-        <source-file src="src/android/AccelListener.java" target-dir="src/org/apache/cordova/devicemotion" />
+        <source-file src="src/android/AccelListener.java" target-dir="src/ch/becompany/cordova/devicemotion" />
     
     </platform>
     
@@ -68,11 +68,11 @@
 	    
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Accelerometer">
-                <param name="android-package" value="org.apache.cordova.devicemotion.AccelListener"/>
+                <param name="android-package" value="ch.becompany.cordova.devicemotion.AccelListener"/>
             </feature>
         </config-file>
 
-        <source-file src="src/android/AccelListener.java" target-dir="src/org/apache/cordova/devicemotion" />
+        <source-file src="src/android/AccelListener.java" target-dir="src/ch/becompany/cordova/devicemotion" />
     
     </platform>
     
