@@ -72,7 +72,7 @@
         __weak CDVAccelerometer* weakSelf = self;
         [self.motionManager startAccelerometerUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMAccelerometerData *accelerometerData, NSError *error) {
             x = accelerometerData.acceleration.x;
-            y = accelerometerData.acceleration.y;
+            y = -accelerometerData.acceleration.y;
             z = accelerometerData.acceleration.z;
             timestamp = ([[NSDate date] timeIntervalSince1970] * 1000);
             [weakSelf returnAccelInfo];
